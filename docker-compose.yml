@@ -12,13 +12,13 @@ services:
       - "host.docker.internal:host-gateway" 
     restart: unless-stopped
     depends_on:
-      - ollama 
+      - ollama
 
   ollama:
-    image: ollama/ollama:latest  
+    image: ollama/ollama:latest
     container_name: ollama
     environment:
-      - OLLAMA_MODEL_PATH=/models   
+      - OLLAMA_MODEL_PATH=/models
     volumes:
-      - ./models:/models 
+      - ./models:/models
     restart: unless-stopped

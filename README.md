@@ -27,11 +27,24 @@ This will pull down all the necessary files, including the **`Dockerfile`**, **`
 
 ### 2\. Make the Setup Script Executable
 
+Copy the `.env-example` file to `.env`:
+
+```
+cp .env-example .env
+```
+
+Then, edit the .env file and replace the placeholders with your real Wi-Fi credentials:
+```
+nano .env
+```
+
+### 3\. Make the Setup Script Executable
+
 Change the permissions of the **`setup.sh`** script to make it executable:
 ```
 chmod +x setup.sh
 ```
-### 3\. Run the Setup Script
+### 4\. Run the Setup Script
 
 Now, run the **`setup.sh`** script. This script will install **Docker**, **Docker Compose**, and set up the environment for running the DeepSeek AI models with OpenWebUI.
 ```
@@ -44,22 +57,22 @@ Now, run the **`setup.sh`** script. This script will install **Docker**, **Docke
 -   Pulls the necessary containers using **Docker Compose**.
 -   Starts the DeepSeek AI containers and the **OpenWebUI**.
 
-### 4\. Access the OpenWebUI
+### 5\. Access the OpenWebUI
 
 Once the script has finished running successfully, you can access the **OpenWebUI** interface through your browser at:
 ```
 http://<IP>:3000
 ```
-Replace `<IP>` with the IP address of your server (or `localhost` if running locally).
+Replace `<IP>` with the IP address of your server (or `localhost` if running locally). You can use `ifconfig` (on Linux) or `ip a` to find your local IP address.
 
-### 5\. Using the Web UI
+### 6\. Using the Web UI
 
 After accessing the **OpenWebUI**, you can:
 
 -   Select the model to use (e.g., **DeepSeek-R1:1.5b**, **DeepSeek-R1:7b**, etc.).
 -   Interact with the AI models through the browser interface.
 
-### 6\. Stopping and Restarting the Containers
+### 7\. Stopping and Restarting the Containers
 
 -   **To stop the containers**:
     ```
@@ -69,8 +82,10 @@ After accessing the **OpenWebUI**, you can:
     ```
     docker-compose up -d
     ```
-
-If the containers are already running and you want to pull new updates, use `git pull` to update the repository.
+-   **If the containers are already running and you want to pull new updates, use:**: 
+    ```
+    git pull
+    ```
 
 ### Supported Models
 

@@ -1,14 +1,35 @@
 #!/bin/bash
 
-# This script installs Docker, Docker Compose, and sets up the environment for running Ollama with DeepSeek models via OpenWebUI
+# This script installs Docker, Docker Compose, connects to Wi-Fi, and sets up the environment for running Ollama with DeepSeek models via OpenWebUI.
 
+echo "Checking if .env file exists..."
+# Ensure .env file is present
+if [ ! -f ".env" ]; then
+    echo ".env file is missing! Please create a .env file with your Wi-Fi credentials."
+    exit 1
+fi
+
+# Load variables from .env file
+export $(cat .env | xargs)
+
+# Connect to Wi-Fi using the credentials from .env
+echo "Connecting to Wi-Fi: $WIFI_SSID"
+sudo nmcli dev wifi connect "$WIFI_SSID" password "$WIFI_PASSWORD"
+
+# Check if Wi-Fi connection was successful
+if [ $? -ne 0 ]; then
+    echo "Failed to connect to Wi-Fi. Please check your credentials."
+    exit 1
+else
+    echo "Connected to Wi-Fi: $WIFI_SSID"
+fi
+
+# Install Docker if it's not installed
 echo "Checking if Docker is installed..."
-
-# Check if Docker is already installed
 if ! command -v docker &> /dev/null
 then
     echo "Docker not found. Installing Docker..."
-
+    
     # Install Docker (for Ubuntu/Debian systems)
     sudo apt-get update
     sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
@@ -25,15 +46,15 @@ else
     echo "Docker is already installed!"
 fi
 
-# Check if Docker Compose is installed
+# Install Docker Compose if it's not installed
+echo "Checking if Docker Compose is installed..."
 if ! command -v docker-compose &> /dev/null
 then
     echo "Docker Compose not found. Installing Docker Compose..."
-
+    
     # Install Docker Compose
     sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
-
     echo "Docker Compose has been installed!"
 else
     echo "Docker Compose is already installed!"
@@ -62,4 +83,4 @@ else
     exit 1
 fi
 
-echo "You can now access OpenWebUI at http://<IP>:3000"
+echo "You can now access OpenWebUI at http://<your_ubuntu_server_ip>:3000"
