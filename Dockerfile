@@ -1,10 +1,10 @@
-# Gebruik een officiële Ubuntu basisimage
+# Use an official Ubuntu base image
 FROM ubuntu:20.04
 
-# Zorg ervoor dat de pakketlijst altijd up-to-date is
+# Ensure the package list is always up to date
 RUN apt-get update && apt-get upgrade -y
 
-# Installeer vereiste pakketten (zoals curl, wget, etc.)
+# Install required packages (such as curl, wget, etc.)
 RUN apt-get install -y \
     curl \
     wget \
@@ -13,20 +13,20 @@ RUN apt-get install -y \
     gnupg2 \
     software-properties-common
 
-# Installeer Ollama
+# Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
-# Maak een map voor je modellen
+# Create a directory for your models
 RUN mkdir -p /models
 
-# Kopieer je model naar de container (zorg ervoor dat je model in de juiste map staat op je host)
+# Copy your model to the container (make sure your model is in the correct directory on your host)
 COPY ./models /models
 
-# Zet de omgeving voor Ollama in de container
+# Set the environment variable for Ollama's model path
 ENV OLLAMA_MODEL_PATH=/models
 
-# Zorg ervoor dat Ollama bereikbaar is via localhost
+# Expose the port to make Ollama accessible via localhost
 EXPOSE 8080
 
-# Start Ollama
+# Start Ollama with the specified model
 CMD ["ollama", "run", "deepseek-r1:14b"]
