@@ -1,4 +1,9 @@
+volumes:
+  ollama_storage:
+  open-webui:
+
 services:
+  # OpenWebUI service
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
@@ -7,13 +12,31 @@ services:
     volumes:
       - ./data:/app/backend/data
     ports:
-      - "3000:8080"  
+      - "3000:8080"
     extra_hosts:
-      - "host.docker.internal:host-gateway" 
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
     depends_on:
       - ollama
+    networks:
+      - app-network
 
+  # Ollama init service (downloads models if needed)
+  init-ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-pull-llama
+    volumes:
+      - ollama_storage:/root/.ollama  # Ensure models are pulled to persistent volume
+    entrypoint: /bin/sh
+    command:
+      - "-c"
+      - "sleep 3; OLLAMA_HOST=ollama:11434 ollama pull deepseek-r1:14b"  # Pull model on startup
+    depends_on:
+      - ollama
+    networks:
+      - app-network
+
+  # Ollama main service
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
@@ -22,3 +45,16 @@ services:
     volumes:
       - ./models:/models
     restart: unless-stopped
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
